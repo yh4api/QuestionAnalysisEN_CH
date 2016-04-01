@@ -1,0 +1,676 @@
+ACL
+Baan
+Great Plains
+Lawson
+MRP
+Multi Term
+Navision
+Oracle ERP
+QAD-MFG/PRO
+SAP
+SSA-BPCS
+Swift
+天心資訊
+文中系統
+正航
+浪潮
+用友U8
+金蝶
+鼎新
+
+
+																
+AS/400
+BizTalk
+CC Mail
+CICS
+Citrix
+ClearCase
+ClearQuest
+Domino
+FileNet
+Focus
+Hyperion (Brio)
+MQSeries
+Microsoft Exchange
+Microsoft SharePoint
+Silverstream
+Tomcat
+VSAM
+Vmware
+WebLogic
+WebMethods
+WebSphere
+
+
+																
+AIX
+Android
+Apple
+DOS
+FreeBSD
+HP-UX
+IDMS
+Linux
+Mac OS
+Mac/Macintosh
+Mainframe
+Microsoft SmartPhone
+NDS/Novell Directory Services
+Novell
+OS X
+OS/2
+OS/390
+OS/400
+Palm OS
+SCO UNIX
+SUN OS
+Shell
+Solaris
+Sun Solaris
+Symbian S60
+TK
+TSO
+TSO/ISPF
+Tandem
+UNIX
+VMS
+WIN CE
+Windows 2000
+Windows 2003
+Windows 7
+Windows 8
+Windows 95
+Windows 98
+Windows Mobile
+Windows NT
+Windows Server 2008
+Windows Server 2012
+Windows Vista
+Windows XP
+iOS
+
+
+																
+6 Sigma
+BS7799
+HACCP
+ISO14000
+ISO9000
+OHSAS18000
+QS9000
+RoHS
+SPC
+TS16949
+
+
+																
+ArcGis
+ArcView
+GIS
+MapBasic
+MapGIS
+MapInfo
+MapPoint
+SuperGIS
+SuperPad
+
+
+																
+3ds Max
+3ds Max Design
+After Effects
+Alias
+Alias studio
+Authorware
+CADAM
+Cakewalk
+Cinema 4D
+Dimensions 3D
+Director
+Flash
+Freehand
+Games
+Graphics
+HomeSite
+IconWorkshop
+Image/Imaging
+Lightwave
+MAYA
+Macromedia Director
+Microsoft Photo Editor
+Motion Builder
+Multimedia Builder
+Painter
+Premiere
+Quark Express
+Rhino
+Shade
+Shockwave
+Showcase
+Softimage
+Strata
+Streamline
+Unity3D
+Vegas
+Vizact 2000
+
+
+																
+AutoCAD
+AutoCad 2D
+AutoCad 3D
+Catia
+DIALux
+Inventor
+LightsCape
+MicroStation
+Photopia
+Pro/E
+Revit
+Sketch up
+Solid Edge
+SolidWorks
+Unigraphics
+Zbrush
+iDeaS
+
+
+																
+Adobe Photoshop
+CoolDraw
+CorelDraw
+Illustrator
+ImageReady
+Paint Shop Pro
+PhotoImpact
+
+
+																
+Adobe InDesign
+FrameMaker
+Pagemaker
+QuarkXPress
+北大方正
+
+
+																
+ACT
+Astra LoadTest
+Astra QuickTest
+Attoltestware
+BounderChecker
+Bugzilla
+C++test
+Cantata
+CodeTest
+DevPartner Studio
+DriverStudio
+EcoScope
+GammaRay
+HttpUnit
+IPS
+Jtest
+Junit
+Link Sleuth
+LoadRunner
+LogiScope
+Macabe
+Mantis
+OpenSTA
+Optimizeit Suite
+PC—lint
+PVCS Tracker
+PureCoverage
+QADirector
+QALoad
+QARun
+QATester
+QTP
+Quality Control
+QuickTest Professional
+Rational ClearCase
+Rational ClearQuest
+Rational Performance
+Rational PureCoverage
+Rational Purify
+Rational Quantify
+Rational Robot
+Rational Rose
+Rational SQA load
+Rational TeamTest
+Rational Test RealTime
+Rational TestFactory
+Rational TestManager
+Robot
+SilkPerformer
+SilkPlan Pro
+SilkRadar
+SilkTest
+SilkVision
+Source Safe/Visual Source Safe
+Test Scripts
+TestBed
+TestBytes
+TestDirector
+TestManager
+TestPartner
+TestQuestPro
+TestTrack Pro
+TrackRecord
+TrueCoverage
+TrueTime
+Version Control
+VisualTest
+WAS
+WebFT
+WebLoad
+WinRunner
+XDE Tester
+Xrunner
+e-Test suite
+
+
+																
+DAB數位音頻廣播
+DSC數位攝像機
+DVB數位視頻廣播
+DVR數位視頻錄像
+GPS全球定位系統
+Mobile phone
+PDA/Handhelds
+WVR無線視頻錄影
+
+
+
+																
+A+
+ADA
+AJAX
+ASP
+ASP.NET
+ATL
+ActionScript
+C
+C#
+C++
+C++.Net
+CGI
+COBOL
+COM/DCOM
+COOL:Gen
+CORBA
+Clipper
+Delphi
+Developer/ Designer 2000
+DirectX
+FORTRAN
+Fox Pro
+FoxBASE+
+Infobasic
+JCL
+JCreator Pro
+JMS
+JSF
+JSP
+Java
+Kylix
+LabVIEW
+Lotus Notes
+LotusScript
+MFC
+Matlab
+Objective-C
+PAL
+PECL
+PHP
+PL/1
+Pascal
+PeopleCode
+Perl
+PowerBuilder
+Pro*C
+Python
+RMI
+RPG
+Rexx
+Ruby
+SIR
+SQR
+Silverlight
+Simula
+Smalltalk
+Spring
+StarTeam
+Struts
+TCL
+VBA
+Visual Basic
+Visual Basic .net
+Visual C#
+Visual C++
+Visual J#
+Visual J++
+Visual SourceSafe
+Visual Studio
+Visual Studio .net
+WML
+Win32
+WinForm
+XSL
+XSLT
+
+
+																
+AdvanceLink
+Asynch
+BGP
+Banyan
+Banyan Vines
+Bay
+Bay Networks
+Bridges
+BroadVision
+Checkpoint
+Cisco
+DHCP
+DNS
+EDI
+Ethernet
+FTP
+Firewall
+Frame Relay
+HP Open View
+HTTP
+Hubs
+Hubs/ Routers
+IDS
+IIS
+ISAM
+ISAPI
+ISDN
+ISIS
+Intrusion
+Juniper
+LAN
+LDAP
+LanManager
+LanServer
+Lantastic
+Lap Link
+Lease Lines
+Load Balancing
+MOM
+MPLS
+MVX
+Multinet
+NatMaster
+NetMaster
+NetWare
+Netbios
+Network Cards
+OSPF
+Optical Fibre
+PPPoE
+Pathworks
+RIP
+Reflection
+Routers
+SAN
+SNA
+SOAP
+Security
+Sniffer
+Socket
+Sonet
+Squid
+TCP/IP
+TcpDump
+UDP
+VLAN
+VPN
+WAN
+WAP
+X.25
+X400
+e-commerce
+iptables
+ssh
+
+
+																
+ActiveX
+Apache SOAP
+Cold Fusion
+DHTML
+Dreamweaver
+EJB
+Electronic Payment
+Fireworks
+FrontPage
+GoLive
+HTML
+J2EE
+J2ME
+J2SE
+JavaScript
+NetObjects Fusion
+RoboHelp
+SGML
+SMIL
+Shtml
+VBScript
+VRML
+Web Master/Developer
+XHTML
+XML
+XML Web services
+XSP
+jQuery
+
+
+																
+CAM
+CIM
+CMP化學機械研磨技術
+CVD化學氣象沉積
+Flip Chip構裝製程
+IE工業工程
+MES
+PCBA
+SMT
+
+
+																
+ADC
+ADS
+ARM
+ASIC
+AVL
+Assembly
+CA
+CPLD
+CST
+Cadence Allegro
+Chipware
+Circuit Design
+DEC/VAX
+DSP
+Drivers
+EDA
+EMC/EMI
+FPGA
+Firmware
+GEAC
+HFSS
+LCOS
+MIDI
+MVS
+MicroFocus
+Mobile Network
+OrCAD
+P-CAD
+PADS
+PLC
+PLD
+PowerLogic
+PowerPCB
+Protel
+RTL
+SPICE
+Synopsys
+Tape Operator
+USB技術
+VHDL
+VM
+Verilog
+
+
+																
+CASE
+Data Architect
+Data Marts
+
+
+SQL																
+ADO
+ANSI SQL
+Access
+Adabas
+Brio
+CMMS
+Capacity Planning
+Cognos
+DB2
+Data Guard
+Data Modeling
+DataStage
+Database Administrator
+Database Management
+Dbase
+ERwin
+ETL
+Endevor
+Essbase
+FoWindows Xpro
+FoxBase
+FoxPro 2
+IMS
+ISPF
+Infomix
+Informatica
+Ingres
+Interbase
+JDBC
+Jasmine
+MS SQL
+MySQL
+ODBC
+OLAP
+OWB
+Oracle
+PL/SQL
+ParaDox
+PostgreSQL
+Progress
+RDBMS
+SAPDB
+SYSBASE
+Sagent
+Sybase
+Toad
+Visual Foxpro
+
+
+																
+CVS
+CleverPath
+Hadoop
+MicroStrategy
+PeopleSoft
+R
+RACF
+Remedy
+SAN/NAS
+SAS
+SPSS
+Siebel
+TIBCO
+Teradata
+Tivoli
+VERITAS
+
+
+																
+ABAQUS
+DDK
+MCU
+OOAD
+OOP
+Oracle Forms
+PVCS
+SDLC
+STL
+Servlets
+Systems Administration
+Systems Analysis
+Systems Analyst
+UML
+VxWorks
+
+
+																
+Adobe Acrobat
+Communicator
+Excel
+Flex
+ForeHelp
+Ghost
+Internet Explorer
+Lotus 123
+Netscape Communication
+OneNote
+Oracle Financials
+Outlook
+PowerPoint
+Project
+Publisher
+Visio
+WPS
+Word
+Wordperfect
+
+
+																
+3G
+ADSL
+AppleTalk
+Avaya
+Bluetooth
+CDMA
+CIP
+FDDI
+FPT
+GMS
+GPRS
+GSM
+MMS
+PABX
+PBX
+PHS
+PSTN
+RF
+RTSP
+Relay Gold
+SMS
+SNMP
+SS7
+Telecom
+USB OTG
+VoIP
+WLAN
+Wimax
+XDSL
+
+
+
