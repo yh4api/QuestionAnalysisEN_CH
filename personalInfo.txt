@@ -1,0 +1,15 @@
+name
+surname
+nickname
+kid
+kids
+child
+children
+parent
+parents
+family
+friend
+pet
+pets
+preference
+
