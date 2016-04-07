@@ -1,5 +1,5 @@
 #-*- coding:utf-8 -*-
-#last updated:2016.04.06
+#last updated:2016.04.07
 import sys
 import re
 #default structure: 
@@ -38,7 +38,7 @@ def createSkillDict(filedir="./"):
 			if l == "":
 				continue
 			l = " "+l+" "
-			skillSet.append(l)
+			#skillSet.append(l)
 			skillSet.append(l.lower())
 		fin.close()
 	return skillSet
@@ -236,13 +236,21 @@ class ChNLParser:
 		if re.search("(師|員|長|师|员|长)$", self.content["target"]) != None:
 			self.content["keywords"].append(self.content["target"])
 			self.content["target"] = "PERSON"
-		elif re.search("(書|文章|文件|部落格|blog|书|博格|資料|资料|新聞|新闻|資訊|訊息|资讯|讯息)", self.content["target"]) != None:
+		elif re.search("(書|文章|文件|部落格|blog|书|博格|資料|资料|新聞|新闻|資訊|訊息|资讯|讯息|文檔|文档)", self.content["target"]) != None:
 			self.content["keywords"].append(self.content["target"])
 			self.content["target"] = "NEWS"
 		elif re.search("(論文|期刊|论文|科普|科普|報告|报告)", self.content["target"])!= None:
 			self.content["keywords"].append(self.content["target"])
-			self.content["target"] = "papers"
-
+			self.content["target"] = "PAPERS"
+		
+		if self.content["target"] == "" and not self.content["keywords"]:#default if nothing found above, assign a category if the sentence contains special terms
+			if re.search("(書|文章|文件|部落格|blog|书|博格|資料|资料|新聞|新闻|資訊|訊息|资讯|讯息|文檔|文档)", sentence) != None:
+				self.content["target"] = "NEWS"
+			elif re.search("(師|員|長|师|员|长|人)", sentence) != None:
+				self.content["target"] = "PERSON"
+			elif re.search("(論文|期刊|论文|科普|科普|報告|报告)", sentence)!= None:
+				self.content["target"] = "PAPERS"
+		
 		
 		if not converted:
 			self.content["keywords"] = [ self.convertToTC(k) for k in self.content["keywords"]]
