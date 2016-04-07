@@ -1,5 +1,5 @@
 #-*- coding:utf-8 -*-
-#last updated:2015.01.13
+#last updated:2016.04.07
 import sys
 import re
 #default structure: 
@@ -37,7 +37,7 @@ def createSkillDict():
 			if l == "":
 				continue
 			l = " "+l+" "
-			skillSet.append(l)
+			#skillSet.append(l)
 			skillSet.append(l.lower())
 		fin.close()
 	return skillSet
@@ -104,7 +104,7 @@ class ChNLParser:
 			elif w.word == " ":
 				fs.append("x_space")
 				ws.pop()
-				ws.append("SPACE")
+				ws.append("SPaAcE")
 			elif re_alldigit.match(w.word) != None:
 				fs.append("m_alldigits")
 			else:
@@ -154,7 +154,8 @@ class ChNLParser:
 					#print iid, u
 					self.content["keywords"].append(u)
 				elif len(u.split(" ")) > 2:
-					tmp_chars = u.split()
+					#tmp_chars = u.split()
+					tmp_chars =[("" if ("有关" in ui or "关于" in ui) else ui) for ui in u.split()]
 					re_list = [re_np1, re_np2, re_np3, re_np4, re_np6]
 					for r_comp in re_list:
 						#print r_comp.pattern
@@ -166,7 +167,7 @@ class ChNLParser:
 							#print m.start(), m.end()
 							#print iid, m.group(), bstart, bend, (" ".join(tmp_chars[bstart:bend+1])).replace("SPACE", "")
 							#print iid, (" ".join(tmp_chars[bstart:bend+1])).replace("SPACE", "")
-							self.content["keywords"].append((" ".join(tmp_chars[bstart:bend+1])).replace("SPACE", ""))
+							self.content["keywords"].append((" ".join(tmp_chars[bstart:bend+1])).replace("SPaAcE", ""))
 
 			iid += 1
 	
@@ -196,15 +197,15 @@ class ChNLParser:
 		m2 = pat_2.search(sentence)
 		if m1 != None:
 			#print m1.group(2)
-			self.content["keywords"].append(m1.group(2))
+			self.content["keywords"].append(m1.group(2).replace("SPaAcE", " "))
 		if m2 != None:
 			#print m2.group(2)
-			self.content["keywords"].append(m2.group(2))
+			self.content["keywords"].append(m2.group(2).replace("SPaAcE", " "))
 
 
 	def isKeywordContained(self, sentence):
 		for s in self.skillSet:
-			if s in sentence or sentence.endswith(s.rstrip()):
+			if s in sentence.lower() or sentence.lower().endswith(s.rstrip()):
 				#print s.strip()
 				self.content["keywords"].append(s.strip())
 
@@ -231,14 +232,22 @@ class ChNLParser:
 		if re.search("(師|員|長|师|员|长)$", self.content["target"]) != None:
 			self.content["keywords"].append(self.content["target"])
 			self.content["target"] = "PERSON"
-		elif re.search("(書|文章|文件|部落格|blog|书|博格|資料|资料|新聞|新闻)", self.content["target"]) != None:
+		elif re.search("(書|文章|文件|部落格|blog|书|博格|資料|资料|新聞|新闻|資訊|訊息|资讯|讯息|文檔|文档)", self.content["target"]) != None:
 			self.content["keywords"].append(self.content["target"])
 			self.content["target"] = "NEWS"
 		elif re.search("(論文|期刊|论文|科普|科普)", self.content["target"])!= None:
 			self.content["keywords"].append(self.content["target"])
-			self.content["target"] = "papers"
+			self.content["target"] = "PAPERS"
 
-		
+		if self.content["target"] == "" and not self.content["keywords"]:#default if nothing found above, assign a category if the sentence contains special terms
+			if re.search("(書|文章|文件|部落格|blog|书|博格|資料|资料|新聞|新闻|資訊|訊息|资讯|讯息|文檔|文档)", sentence) != None:
+				self.content["target"] = "NEWS"
+			elif re.search("(師|員|長|师|员|长|人)", sentence) != None:
+				self.content["target"] = "PERSON"
+			elif re.search("(論文|期刊|论文|科普|科普|報告|报告)", sentence)!= None:
+				self.content["target"] = "PAPERS"
+
+			
 		if not converted:
 			self.content["keywords"] = [ self.convertToTC(k) for k in self.content["keywords"]]
 			self.resetLocalDict()
