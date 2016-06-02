@@ -1,10 +1,15 @@
 import re
-#last updated:2015.12.31
-import xml.etree.ElementTree as ET
+#last updated:2016.04.13
+import xml.etree.ElementTree as ET #seems this works in both python and jython
 #from elementtree import ElementTree as ET
 #import yaml
 
 from datetime import date
+
+
+#===== add verb frame
+
+verbFrameDict = {"find":"dobj"}
 
 #=====regex=====
 moDay = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
@@ -340,6 +345,8 @@ class EnNLParser:
 		wordlist = []
 		taglist = []
 		nertaglist = []
+		lemmalist = []
+		hasVerbFrameItem = 0
 		new_str = ""
 		"""
 		sentences = root.findall("./document/sentences/sentence")
@@ -355,6 +362,9 @@ class EnNLParser:
 		for t in tokens:
 			wordlist.append(t.find("word").text)
 			taglist.append(t.find("POS").text)
+			lemmalist.append(t.find("lemma").text)
+			if lemmalist[-1] in verbFrameDict:
+				hasVerbFrameItem = 1
 			if " ".join(wordlist).lower().endswith("machine learning"):
 				taglist[-1] = "NN"
 			nertaglist.append(t.find("NER").text)
@@ -491,26 +501,42 @@ class EnNLParser:
 				action = m.group(1)
 				target = token_r[v]		
 			else:
-
 				act = requestDetection(replaced_sentence, wordlist, dep)
 				if len(act)== 2:
 					action = "find"
 					#target = act[2] + act[3]
 					target = act[1]
+					"""
 					for p,q in enumerate(token_r):
 						if q.endswith(act[1]):
 							token_r.pop(p)
+					"""
+				elif hasVerbFrameItem:#check if verb_frame item is in the sentence
+					for vFrame in verbFrameDict.keys():
+						if vFrame in lemmalist:
+							vFramePos = lemmalist.index(vFrame)
+							action = vFrame
+							main_obj = dep.find("dep[@type=\"%s\"]/governor[@idx=\"%d\"]/.."%(verbFrameDict[vFrame], vFramePos+1))
+							if main_obj != None:
+								target = main_obj.find("dependent").text
 				else:
 					main_obj = dep.find("dep[@type=\"dobj\"]/governor[@idx=\""+str(h_pos)+"\"]/..")
 					if main_obj != None:
 						action = main_obj.find("governor").text 
 						target = main_obj.find("dependent").text
+						"""
 						k = 0
 						for t in token_r:
 							if t.endswith(target):
 								token_r.pop(k)
 								break
 							k += 1
+						"""
+				if target!="":
+					for t_i, t in enumerate(token_r):
+						if t.endswith(target):
+							token_r.pop(t_i)
+							break
 	 
 			if action!="":
 				self.content["action"] = action
@@ -552,7 +578,7 @@ class EnNLParser:
 		return self.content
 
 	def reset(self):
-		self.content = {"keywords":[],"action":"","target":"","date":"","ne":[], "lang":"en"}
+		self.content = {"keywords":[],"action":"find","target":"","date":"","ne":[], "lang":"en"}
 
 
 
