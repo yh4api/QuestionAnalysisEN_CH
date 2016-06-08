@@ -1,5 +1,5 @@
 #-*- coding:utf-8 -*-
-#last updated:2016.04.07
+#last updated:2016.06.02
 import sys
 import re
 #default structure: 
@@ -13,7 +13,7 @@ import re
 sys.path.append("/home/yhlin/jieba-master")
 import jieba
 import jieba.posseg as pseg
-
+from nltk.corpus import wordnet as WN
 
 re_alldigit = re.compile("\d+")
 re_np1 = re.compile(r"\b((eng|x_space|m_alldigits) ?){3,}")
@@ -22,10 +22,11 @@ re_np3 = re.compile(r"\b([an][a-z]* )+uj_de (n[a-z]* |a[a-z]* )*n[^s ]*")
 re_np4 = re.compile(r"\ba[a-z]* (n[a-z]* ?)+") # n a n n 是可以的嗎?
 #re_np5 = re.compile("(a[a-z]* )+ul_de (n[^s]* )+")
 re_np6 = re.compile(r"\b(ns ?){2,}")
+re_np7 = re.compile(r"\beng\b")
 
 wh_word = ["誰","什麼", "怎麼", "哪裡", "谁", "什么","哪里"]
 
-def createSkillDict(filedir="./"):
+def createSkillDict(filedir="/home/yhlin/smallQAEN_CH/"):
 	skillSet = []
 	filelist = ["skills.txt", "job_role.txt", "cetegory.txt"]
 	#filedir = "/home/yhlin/skillSetOntology/"
@@ -43,7 +44,7 @@ def createSkillDict(filedir="./"):
 		fin.close()
 	return skillSet
 
-def readCharTable(filedir = "./"):
+def readCharTable(filedir = "/home/yhlin/smallQAEN_CH/"):
 	dictFile = filedir+"utftable.txt"
 	table = {}
 	fin = open(dictFile, "r")
@@ -176,7 +177,20 @@ class ChNLParser:
 							self.content["keywords"].append((" ".join(tmp_chars[bstart:bend+1])).replace("SPaAcE", ""))
 
 			iid += 1
-	
+
+		## following codes handle isolated ENG words: if an ENG word can be found in wordnet dictionary and acts as a Noun more than 50%, put it in the keyword list
+		cmpString = "".join(self.content["keywords"])
+		for w, f in zip(word, flag):
+			if f == "eng" and (w not in cmpString):
+				nCat = 0
+				wCat = 0
+				for syn in WN.synsets(w):
+					cate = syn.name.split(".")[1]
+					wCat += 1
+					nCat += 1 if cate == "n" else 0
+				if wCat != 0 and nCat*10/wCat > 5:
+					self.content["keywords"].append(w)
+
 	def targetRulesForRMS(self, words, tags, debug=False):
 		word_seq = " ".join(words)
 		tag_seq = " ".join(tags)
