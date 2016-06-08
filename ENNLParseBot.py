@@ -1,4 +1,4 @@
-import re
+import re, os
 #last updated:2016.04.13
 import xml.etree.ElementTree as ET #seems this works in both python and jython
 #from elementtree import ElementTree as ET
@@ -285,7 +285,14 @@ def question_detect(whIndicator):
 	else:
 		return ""
 
+def readStopKeywords(filedir = "./"):
+	dictFile = os.path.join(filedir, "stopKeyword_EN.txt")
+	
+	keywordFilter = map(lambda x:x.rstrip(), open(dictFile, "r").readlines())
+	return keywordFilter
+
 class EnNLParser:
+	stopKeywords = readStopKeywords()
 	def __init__(self):
 		self.content = {"keywords":[],"action":"","target":"","date":"","ne":[], "lang":"en"}
 	
@@ -573,6 +580,12 @@ class EnNLParser:
 		elif self.content["target"].lower() in ["paper", "journal", "journals", "publication"]:
 			self.content["keywords"].append(self.content["target"])
 			self.content["target"] = "PAPERS"
+
+		tmpkw = []
+		for kv in self.content["keywords"]:
+			if kv.strip() not in EnNLParser.stopKeywords:
+				tmpkw.append(kv)
+		self.content["keywords"] = tmpkw
 
 			
 		return self.content

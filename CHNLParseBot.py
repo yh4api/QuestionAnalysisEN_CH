@@ -1,6 +1,6 @@
 #-*- coding:utf-8 -*-
 #last updated:2016.06.02
-import sys
+import sys, os
 import re
 #default structure: 
 # keywords => multiple, array/list
@@ -26,7 +26,7 @@ re_np7 = re.compile(r"\beng\b")
 
 wh_word = ["誰","什麼", "怎麼", "哪裡", "谁", "什么","哪里"]
 
-def createSkillDict(filedir="/home/yhlin/smallQAEN_CH/"):
+def createSkillDict(filedir="./"):
 	skillSet = []
 	filelist = ["skills.txt", "job_role.txt", "cetegory.txt"]
 	#filedir = "/home/yhlin/skillSetOntology/"
@@ -44,7 +44,7 @@ def createSkillDict(filedir="/home/yhlin/smallQAEN_CH/"):
 		fin.close()
 	return skillSet
 
-def readCharTable(filedir = "/home/yhlin/smallQAEN_CH/"):
+def readCharTable(filedir = "./"):
 	dictFile = filedir+"utftable.txt"
 	table = {}
 	fin = open(dictFile, "r")
@@ -58,12 +58,20 @@ def readCharTable(filedir = "/home/yhlin/smallQAEN_CH/"):
 	fin.close()
 	return table
 
+def readStopKeywords(filedir = "./"):
+	dictFile = os.path.join(filedir, "stopKeyword_CH.txt")
+	
+	keywordFilter = map(lambda x:x.strip(), open(dictFile, "r").readlines())
+	return keywordFilter
+
 class ChNLParser:
 	
 	skillSet = createSkillDict()
 #	skillSet = {}
 	charTable = readCharTable()
 #	charTable = {}
+	stopKeywords = readStopKeywords()
+
 	def __init__(self):
 		self.content = {"keywords":[],"action":"find","target":"","date":"","ne":[], "lang":"ch"}
 		self.localdict = {}	
@@ -285,6 +293,11 @@ class ChNLParser:
 			elif re.search("(論文|期刊|论文|科普|科普|報告|报告)", sentence)!= None:
 				self.content["target"] = "PAPERS"
 		
+		tmpkw = []
+		for kv in self.content["keywords"]:
+			if kv.strip() not in ChNLParser.stopKeywords:
+				tmpkw.append(kv)
+		self.content["keywords"] = tmpkw
 		
 		if not converted:
 			self.content["keywords"] = [ self.convertToTC(k) for k in self.content["keywords"]]
