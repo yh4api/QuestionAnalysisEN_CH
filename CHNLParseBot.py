@@ -230,6 +230,23 @@ class ChNLParser:
 				#print s.strip()
 				self.content["keywords"].append(s.strip())
 
+	def isNLQuery(self, ws, fs):
+		fs = map(lambda x:x[0], fs)
+		if ((set(fs)&set(["v","r","n","p","eng"]) <= set(["v","r","n","p","eng"])))==False and (len(fs) < 3):
+			if (set(fs)&set["v", "p"]) == set():
+				return False
+		return True
+
+	def isRequestingQuery(self, words, flags):
+		if "是" in words or "是不是" in words:
+			return False
+		if "了" in words[-3:]:
+			return False
+		#["找", "給"]
+		if set(words).intersection(set(["誰", "谁", "哪里", "哪裡", "几时","几点","幾點","怎麼","为什么","為什麼","为啥","為啥"]))!= set():
+			return False
+		return True
+
 	def parse(self, sentence, debug=False):
 		
 		sen_r = sentence.rstrip()
@@ -237,6 +254,9 @@ class ChNLParser:
 			return self.content
 		(sen_sc, converted) = self.convert(sen_r)
 		(oriwords, tags) = self.postagger(sen_sc, debug)
+		if self.isNLQuery(oriwords, tags) == False or self.isRequestingQuery(oriwords, tags) == False:
+			self.content["action"]="No Valid Action"
+			return self.content
 		(words, tags) = self.targetRulesForRMS(oriwords, tags, debug)
 		(nw, nt) = self.combineAndReplace(words, tags)
 		self.extractPhrase(nw, nt, debug)
