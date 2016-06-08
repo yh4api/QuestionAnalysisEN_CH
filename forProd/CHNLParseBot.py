@@ -1,5 +1,5 @@
 #-*- coding:utf-8 -*-
-#last updated:2016.04.07
+#last updated:2016.06.02
 import sys
 import re
 #default structure: 
@@ -13,6 +13,7 @@ import re
 #sys.path.append("/home/yhlin/jieba-master")
 import jieba
 import jieba.posseg as pseg
+from nltk.corpus import wordnet as WN
 
 re_alldigit = re.compile("\d+")
 re_np1 = re.compile(r"\b((eng|x_space|m_alldigits) ?){3,}")
@@ -170,7 +171,20 @@ class ChNLParser:
 							self.content["keywords"].append((" ".join(tmp_chars[bstart:bend+1])).replace("SPaAcE", ""))
 
 			iid += 1
-	
+		## following codes handle isolated ENG words: if an ENG word can be found in wordnet dictionary and acts as a Noun more than 50%, put it in the keyword list
+		cmpString = "".join(self.content["keywords"])
+		for w, f in zip(word, flag):
+			if f == "eng" and (w not in cmpString):
+				nCat = 0
+				wCat = 0
+				for syn in WN.synsets(w):
+					cate = syn.name.split(".")[1]
+					wCat += 1
+					nCat += 1 if cate == "n" else 0
+				if wCat != 0 and nCat*10/wCat > 5:
+					self.content["keywords"].append(w)
+
+
 	def targetRulesForRMS(self, words, tags, debug=False):
 		word_seq = " ".join(words)
 		tag_seq = " ".join(tags)
@@ -229,20 +243,20 @@ class ChNLParser:
 			self.content["keywords"].append(self.content["target"])
 			self.content["target"] = "PERSON"
 		
-		if re.search("(師|員|長|师|员|长)$", self.content["target"]) != None:
+		if re.search("(師|員|長|师|员|长|家)$", self.content["target"]) != None:
 			self.content["keywords"].append(self.content["target"])
 			self.content["target"] = "PERSON"
 		elif re.search("(書|文章|文件|部落格|blog|书|博格|資料|资料|新聞|新闻|資訊|訊息|资讯|讯息|文檔|文档)", self.content["target"]) != None:
 			self.content["keywords"].append(self.content["target"])
 			self.content["target"] = "NEWS"
-		elif re.search("(論文|期刊|论文|科普|科普)", self.content["target"])!= None:
+		elif re.search("(論文|期刊|论文|科普|科普|報告|报告)", self.content["target"])!= None:
 			self.content["keywords"].append(self.content["target"])
 			self.content["target"] = "PAPERS"
 
 		if self.content["target"] == "" and not self.content["keywords"]:#default if nothing found above, assign a category if the sentence contains special terms
 			if re.search(u"(書|文章|文件|部落格|blog|书|博格|資料|资料|新聞|新闻|資訊|訊息|资讯|讯息|文檔|文档)", sen_r ) != None:
 				self.content["target"] = "NEWS"
-			elif re.search(u"(師|員|長|师|员|长|人)", sen_r) != None:
+			elif re.search(u"(人員|人员|人才|专家|專家|师|師|学者|學者|員|長|员|长|人)", sen_r) != None:
 				self.content["target"] = "PERSON"
 			elif re.search(u"(論文|期刊|论文|科普|科普|報告|报告)", sen_r)!= None:
 				self.content["target"] = "PAPERS"
