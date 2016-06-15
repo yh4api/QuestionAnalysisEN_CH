@@ -1,5 +1,5 @@
 import re, os
-#last updated:2016.04.13
+#last updated:2016.06.08
 import xml.etree.ElementTree as ET #seems this works in both python and jython
 #from elementtree import ElementTree as ET
 #import yaml
@@ -541,7 +541,11 @@ class EnNLParser:
 						"""
 				if target!="":
 					for t_i, t in enumerate(token_r):
-						if t.endswith(target):
+						if t.endswith(target) and len(token_r[t_i].split(" ")) < 0:
+							pass
+							#token_r[t_i] = token_r[t_i].rsplit(" ", 1)[0]
+							#break
+						elif t.endswith(target):
 							token_r.pop(t_i)
 							break
 	 
@@ -583,7 +587,7 @@ class EnNLParser:
 
 		tmpkw = []
 		for kv in self.content["keywords"]:
-			if kv.strip() not in EnNLParser.stopKeywords:
+			if kv.strip().lower() not in EnNLParser.stopKeywords:
 				tmpkw.append(kv)
 		self.content["keywords"] = tmpkw
 

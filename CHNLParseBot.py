@@ -1,5 +1,5 @@
 #-*- coding:utf-8 -*-
-#last updated:2016.06.02
+#last updated:2016.06.08
 import sys, os
 import re
 #default structure: 
@@ -240,8 +240,9 @@ class ChNLParser:
 
 	def isNLQuery(self, ws, fs):
 		fs = map(lambda x:x[0], fs)
-		if ((set(fs)&set(["v","r","n","p","eng"]) <= set(["v","r","n","p","eng"])))==False and (len(fs) < 3):
-			if (set(fs)&set["v", "p"]) == set():
+		#if ((set(fs)&set(["v","r","n","p","eng"]) <= set(["v","r","n","p","eng"])))==False or (len(fs) < 3):
+		if len(set(fs)&set(["v","r","n","p","eng"])) < 3:
+			if (set(fs)&set(["v", "p"])) == set():
 				return False
 		return True
 
