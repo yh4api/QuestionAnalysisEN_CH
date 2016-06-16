@@ -1,5 +1,5 @@
-import re
-#last updated:2016.04.13
+import re, os
+#last updated:2016.06.08
 import xml.etree.ElementTree as ET #seems this lib works in both python and jython
 #from elementtree import ElementTree as ET
 #import yaml
@@ -285,7 +285,14 @@ def question_detect(whIndicator):
 	else:
 		return ""
 
+def readStopKeywords(filedir = "/data2/opt/PythonProjects/NLPQuery/python/"):
+	dictFile = os.path.join(filedir, "stopKeyword_EN.txt")
+	
+	keywordFilter = map(lambda x:x.rstrip(), open(dictFile, "r").readlines())
+	return keywordFilter
+
 class EnNLParser:
+	stopKeywords = readStopKeywords()
 	def __init__(self):
 		self.content = {"keywords":[],"action":"","target":"","date":"","ne":[], "lang":"en"}
 	
@@ -534,7 +541,11 @@ class EnNLParser:
 						"""
 				if target!="":
 					for t_i, t in enumerate(token_r):
-						if t.endswith(target):
+						if t.endswith(target) and len(token_r[t_i].split(" ")) < 0:
+							pass
+							#token_r[t_i] = token_r[t_i].rsplit(" ", 1)[0]
+							#break
+						elif t.endswith(target):
 							token_r.pop(t_i)
 							break
 	 
@@ -573,6 +584,12 @@ class EnNLParser:
 		elif self.content["target"].lower() in ["paper", "journal", "journals", "publication"]:
 			self.content["keywords"].append(self.content["target"])
 			self.content["target"] = "PAPERS"
+
+		tmpkw = []
+		for kv in self.content["keywords"]:
+			if kv.strip().lower() not in EnNLParser.stopKeywords:
+				tmpkw.append(kv)
+		self.content["keywords"] = tmpkw
 
 			
 		return self.content

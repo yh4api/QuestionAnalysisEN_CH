@@ -1,6 +1,6 @@
 #-*- coding:utf-8 -*-
-#last updated:2016.06.02
-import sys
+#last updated:2016.06.08
+import sys, os
 import re
 #default structure: 
 # keywords => multiple, array/list
@@ -56,11 +56,18 @@ def readCharTable(dictFile = "/data2/opt/PythonProjects/NLPQuery/python/utftable
 	fin.close()
 	return table
 
+def readStopKeywords(filedir = "/data2/opt/PythonProjects/NLPQuery/python/"):
+	dictFile = os.path.join(filedir, "stopKeyword_CH.txt")
+	
+	keywordFilter = map(lambda x:x.strip(), open(dictFile, "r").readlines())
+	return keywordFilter
+
 
 class ChNLParser:
 	
 	skillSet = createSkillDict()
 	charTable = readCharTable()
+	stopKeywords = readStopKeywords()
 	def __init__(self):
 		self.content = {"keywords":[],"action":"find","target":"","date":"","ne":[], "lang":"ch"}
 		self.localdict = {}	
@@ -223,6 +230,24 @@ class ChNLParser:
 				#print s.strip()
 				self.content["keywords"].append(s.strip())
 
+	def isNLQuery(self, ws, fs):
+		fs = map(lambda x:x[0], fs)
+		#if ((set(fs)&set(["v","r","n","p","eng"]) <= set(["v","r","n","p","eng"])))==False and (len(fs) < 3):
+		if len(set(fs)&set(["v", "r", "n", "p", "eng"])) < 3:
+			if (set(fs)&set(["v", "p"])) == set():
+				return False
+		return True
+
+	def isRequestingQuery(self, words, flags):
+		if "是" in words or "是不是" in words:
+			return False
+		if "了" in words[-3:]:
+			return False
+		#["找", "給"]
+		if set(words).intersection(set(["誰", "谁", "哪里", "哪裡", "几时","几点","幾點","怎麼","为什么","為什麼","为啥","為啥"]))!= set():
+			return False
+		return True
+
 	def parse(self, sentence, debug=False):
 		
 		sen_r = sentence.rstrip()
@@ -233,6 +258,9 @@ class ChNLParser:
 			return self.content
 		(sen_sc, converted) = self.convert(sen_r)
 		(oriwords, tags) = self.postagger(sen_sc, debug)
+		if self.isNLQuery(oriwords, tags) == False or self.isRequestingQuery(oriwords, tags) == False:
+			self.content["action"]="No Valid Action"
+			return self.content
 		(words, tags) = self.targetRulesForRMS(oriwords, tags, debug)
 		(nw, nt) = self.combineAndReplace(words, tags)
 		self.extractPhrase(nw, nt, debug)
@@ -261,7 +289,12 @@ class ChNLParser:
 			elif re.search(u"(論文|期刊|论文|科普|科普|報告|报告)", sen_r)!= None:
 				self.content["target"] = "PAPERS"
 
-			
+		tmpkw = []
+		for kv in self.content["keywords"]:
+			if kv.strip() not in ChNLParser.stopKeywords:
+				tmpkw.append(kv)
+		self.content["keywords"] = tmpkw
+		
 		if not converted:
 			self.content["keywords"] = [ self.convertToTC(k) for k in self.content["keywords"]]
 			self.resetLocalDict()
