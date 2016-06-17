@@ -1,5 +1,5 @@
 #-*- coding:utf-8 -*-
-#last updated:2016.06.08
+#last updated:2016.06.15
 import sys, os
 import re
 #default structure: 
@@ -22,7 +22,7 @@ re_np3 = re.compile(r"\b([an][a-z]* )+uj_de (n[a-z]* |a[a-z]* )*n[^s ]*")
 re_np4 = re.compile(r"\ba[a-z]* (n[a-z]* ?)+") # n a n n 是可以的嗎?
 #re_np5 = re.compile("(a[a-z]* )+ul_de (n[^s]* )+")
 re_np6 = re.compile(r"\b(ns ?){2,}")
-re_np7 = re.compile(r"\beng\b")
+re_np7 = re.compile(r"\b(n[a-z]* ?|avn ?){2,}\b")
 
 wh_word = ["誰","什麼", "怎麼", "哪裡", "谁", "什么","哪里"]
 
@@ -165,13 +165,13 @@ class ChNLParser:
 		for u, t in zip(units, tag_unit):
 			if u != "* ":
 				#print u, len(u.split(" ")), t, re.match("n[a-z]", t)==None
-				if len(u.split(" ")) <= 2 and re.match("n[a-fh-z]", t)!=None:
+				if len(u.split(" ")) <= 2 and re.match("n[a-fh-z]", t)!=None: #single term
 					#print iid, u
 					self.content["keywords"].append(u)
 				elif len(u.split(" ")) > 2:
 					#tmp_chars = u.split()
 					tmp_chars =[("" if ("有关" in ui or "关于" in ui) else ui) for ui in u.split()]
-					re_list = [re_np1, re_np2, re_np3, re_np4, re_np6]
+					re_list = [re_np1, re_np2, re_np3, re_np4, re_np6, re_np7]
 					for r_comp in re_list:
 						#print r_comp.pattern
 						for m in r_comp.finditer(t):
@@ -181,8 +181,9 @@ class ChNLParser:
 								bend -= 1
 							#print m.start(), m.end()
 							#print iid, m.group(), bstart, bend, (" ".join(tmp_chars[bstart:bend+1])).replace("SPACE", "")
-							#print iid, (" ".join(tmp_chars[bstart:bend+1])).replace("SPACE", "")
-							self.content["keywords"].append((" ".join(tmp_chars[bstart:bend+1])).replace("SPaAcE", ""))
+							#self.content["keywords"].append((" ".join(tmp_chars[bstart:bend+1])).replace(" SPaAcE ", " ")) <- this one does not remove space between Chinese segments, example 数据 挖掘 => 数据挖掘
+							self.content["keywords"].append((" ".join(tmp_chars[bstart:bend+1])).replace(" ","").replace("SPaAcE", " "))
+							
 
 			iid += 1
 
@@ -200,17 +201,30 @@ class ChNLParser:
 					self.content["keywords"].append(w)
 
 	def targetRulesForRMS(self, words, tags, debug=False):
+		#in Chinese, the easiest way to form a question is to add "嗎?" in the end, delete this and treat it as a declarative sentence.
+		if tags[-1] == "x": #x punctuation
+			tags.pop()
+			words.pop()
+		if tags[-1] == "y": #y 吧嗎呢
+			tags.pop()
+			words.pop()
+
 		word_seq = " ".join(words)
 		tag_seq = " ".join(tags)
 		
 		m = re.search("(uj_de( [\w_]+)* n[a-z]*)$", tag_seq)
+	
 		if m != None:
 			target_tag = m.group(0)
 			ttags = target_tag.split()
 			target_wordlist = words[1-len(ttags):]
 			if debug:
-				print "TARGET IS:", " ".join(target_wordlist)
-			self.content["target"]=" ".join(target_wordlist)
+				#print "TARGET IS:", " ".join(target_wordlist)
+				print "TARGET IS:", words[-1]
+				
+			#self.content["target"]=" ".join(target_wordlist)
+			self.content["target"]= words[-1]
+			
 			return words[:0-len(ttags)], tags[:0-len(ttags)]
 		else:
 			return words, tags
@@ -239,12 +253,14 @@ class ChNLParser:
 				self.content["keywords"].append(s.strip())
 
 	def isNLQuery(self, ws, fs):
-		fs = map(lambda x:x[0], fs)
-		#if ((set(fs)&set(["v","r","n","p","eng"]) <= set(["v","r","n","p","eng"])))==False or (len(fs) < 3):
-		if len(set(fs)&set(["v","r","n","p","eng"])) < 3:
-			if (set(fs)&set(["v", "p"])) == set():
-				return False
-		return True
+		fs = map(lambda x: x[0] if x !="eng" else "eng", fs)
+		if len(set(fs)&set(["v", "r","n","p","eng"])) >= 2 and (set(fs)&set(["v", "p"]))!= set():
+			return True
+		return False
+		#if len(set(fs)&set(["v","r","n","p","eng"])) < 3:
+		#	if (set(fs)&set(["v", "p"])) == set():
+		#		return False
+		#return True
 
 	def isRequestingQuery(self, words, flags):
 		if "是" in words or "是不是" in words:
@@ -276,10 +292,10 @@ class ChNLParser:
 			self.content["keywords"].append(self.content["target"])
 			self.content["target"] = "PERSON"
 		
-		if re.search("(師|員|長|师|员|长|家)$", self.content["target"]) != None:
+		if re.search("(師|員|長|师|员|长|家|者)$", self.content["target"]) != None:
 			self.content["keywords"].append(self.content["target"])
 			self.content["target"] = "PERSON"
-		elif re.search("(書|文章|文件|部落格|blog|书|博格|資料|资料|新聞|新闻|資訊|訊息|资讯|讯息|文檔|文档)", self.content["target"]) != None:
+		elif re.search("(書|文章|文件|部落格|blog|书|博格|資料|资料|新聞|新闻|資訊|訊息|资讯|讯息|文檔|文档|文獻|文献)", self.content["target"]) != None:
 			self.content["keywords"].append(self.content["target"])
 			self.content["target"] = "NEWS"
 		elif re.search("(論文|期刊|论文|科普|科普|報告|报告)", self.content["target"])!= None:
@@ -301,7 +317,8 @@ class ChNLParser:
 		self.content["keywords"] = tmpkw
 		
 		if not converted:
-			self.content["keywords"] = [ self.convertToTC(k) for k in self.content["keywords"]]
+			self.content["keywords"] = [ self.convertToTC(k) for k in list(set(self.content["keywords"]))] # list(set()) to eliminate duplicate items
+			self.content["target"] = self.convertToTC(self.content["target"])
 			self.resetLocalDict()
 		return self.content 
 
