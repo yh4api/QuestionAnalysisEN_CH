@@ -285,20 +285,30 @@ class ChNLParser:
 		if re.search("(師|員|長|师|员|长|家|者)$", self.content["target"]) != None:
 			self.content["keywords"].append(self.content["target"])
 			self.content["target"] = "PERSON"
-		elif re.search("(書|文章|文件|部落格|blog|书|博格|資料|资料|新聞|新闻|資訊|訊息|资讯|讯息|文檔|文档|文献|文獻)", self.content["target"]) != None:
+		elif re.search("(新聞|新闻)", self.content["target"]) != None:
 			self.content["keywords"].append(self.content["target"])
 			self.content["target"] = "NEWS"
 		elif re.search("(論文|期刊|论文|科普|科普|報告|报告)", self.content["target"])!= None:
 			self.content["keywords"].append(self.content["target"])
 			self.content["target"] = "PAPERS"
+		elif re.search("(專利|专利)", self.content["target"])!= None:
+			self.content["keywords"].append(self.content["target"])
+			self.content["target"] = "PATENT"
+		elif re.search("(資料|資訊|资讯|资料|文献|文獻)", self.content["target"])!= None:
+			self.content["keywords"].append(self.content["target"])
+			self.content["target"] = "INFORMATION"
 
 		if self.content["target"] == "" and not self.content["keywords"]:#default if nothing found above, assign a category if the sentence contains special terms
-			if re.search(u"(書|文章|文件|部落格|blog|书|博格|資料|资料|新聞|新闻|資訊|訊息|资讯|讯息|文檔|文档)", sen_r ) != None:
+			if re.search(u"(新聞|新闻)", sen_r ) != None:
 				self.content["target"] = "NEWS"
 			elif re.search(u"(人員|人员|人才|专家|專家|师|師|学者|學者|員|長|员|长|人)", sen_r) != None:
 				self.content["target"] = "PERSON"
 			elif re.search(u"(論文|期刊|论文|科普|科普|報告|报告)", sen_r)!= None:
 				self.content["target"] = "PAPERS"
+			elif re.search(u"(專利|专利)", sen_r)!= None:
+				self.content["target"] = "PATENT"
+			elif re.search(u"(资料|资讯|文献|資料|資訊|文獻)", sen_r)!= None:
+				self.content["target"] = "INFORMATION"
 
 		tmpkw = []
 		for kv in self.content["keywords"]:

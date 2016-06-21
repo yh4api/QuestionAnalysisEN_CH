@@ -408,14 +408,15 @@ class EnNLParser:
 
 		if len(wordlist) < 3:
 			NL = 0
-		if set(list_wh)&set(wordlist)!=set([]):
+		elif set(list_wh)&set(wordlist)!=set([]):
 			NL = 1
 		elif taglist[h_pos-1] in ["VBZ", "VB", "VBP", "VBD"] or (taglist[h_pos-1] in ["VBG", "VBN"] and set(["VBZ", "VB", "VBP", "VBD"])&set(taglist)!=set([])) or set(["is", "are", "was", "were"])&set(wordlist)!=set([]):
 			NL = 1
 		else:
 			pass
-		if  not NL:
+		if not NL:
 			#return "redirect to Keywords Query:"+s+" !@#N/A!@#N/A!@#N/A!@#N/A"
+			self.content["action"] = "No Valid Action"
 			self.content["keywords"].append(s)
 			return self.content
 																	
@@ -577,7 +578,7 @@ class EnNLParser:
 			self.content["keywords"].append(self.content["target"])
 			self.content["target"] = "PERSON"
 
-		elif self.content["target"].lower() in ["document", "documents", "book", "books"]:
+		elif self.content["target"].lower() in ["news"]:
 			self.content["keywords"].append(self.content["target"])
 			self.content["target"] = "NEWS"
 
