@@ -1,5 +1,5 @@
 #-*- coding:utf-8 -*-
-#last updated:2016.06.16
+#last updated:2016.06.21
 import sys, os
 import re
 #default structure: 
@@ -116,6 +116,9 @@ class ChNLParser:
 				ws.append("SPaAcE")
 			elif re_alldigit.match(w.word) != None:
 				fs.append("m_alldigits")
+			elif w.flag.startswith("v") and len(ws) > 1 and ws[-2] == "请":#jieba sometimes pos-tag verb after "請" as "vn" because the result relies on the dictionary heavily.
+				fs.append("v")
+
 			else:
 				fs.append(w.flag)
 		return ws, fs
@@ -294,7 +297,7 @@ class ChNLParser:
 		elif re.search("(專利|专利)", self.content["target"])!= None:
 			self.content["keywords"].append(self.content["target"])
 			self.content["target"] = "PATENT"
-		elif re.search("(資料|資訊|资讯|资料|文献|文獻)", self.content["target"])!= None:
+		elif re.search("(資料|資訊|资讯|资料|文献|文獻|讯息|訊息)", self.content["target"])!= None:
 			self.content["keywords"].append(self.content["target"])
 			self.content["target"] = "INFORMATION"
 
@@ -307,7 +310,7 @@ class ChNLParser:
 				self.content["target"] = "PAPERS"
 			elif re.search(u"(專利|专利)", sen_r)!= None:
 				self.content["target"] = "PATENT"
-			elif re.search(u"(资料|资讯|文献|資料|資訊|文獻)", sen_r)!= None:
+			elif re.search(u"(资料|资讯|文献|資料|資訊|文獻|讯息|訊息)", sen_r)!= None:
 				self.content["target"] = "INFORMATION"
 
 		tmpkw = []
