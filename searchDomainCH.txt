@@ -1,0 +1,14 @@
+SEC:NEWS
+新闻
+SEC:PAPERS
+期刊
+论文
+科普
+报告
+SEC:PATENT
+专利
+SEC:INFORMATION
+资讯
+资料
+文献
+讯息

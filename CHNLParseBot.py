@@ -1,5 +1,5 @@
 #-*- coding:utf-8 -*-
-#last updated:2016.06.21
+#last updated:2016.06.23
 import sys, os
 import re
 #default structure: 
@@ -15,6 +15,8 @@ import jieba
 import jieba.posseg as pseg
 from nltk.corpus import wordnet as WN
 
+libFolder = "./"
+
 re_alldigit = re.compile("\d+")
 re_np1 = re.compile(r"\b((eng|x_space|m_alldigits) ?){3,}")
 re_np2 = re.compile(r"\b(n[a-z]* )+n[^s ]*")
@@ -26,14 +28,14 @@ re_np7 = re.compile(r"\b(n[a-z]* ?|avn ?){2,}\b")
 
 wh_word = ["誰","什麼", "怎麼", "哪裡", "谁", "什么","哪里"]
 
-def createSkillDict(filedir="./"):
+def createSkillDict(filedir = libFolder):
 	skillSet = []
 	filelist = ["skills.txt", "job_role.txt", "cetegory.txt"]
 	#filedir = "/home/yhlin/skillSetOntology/"
 	#filedir = "./"
 	for f in filelist[:1]:
 		#with open(filedir+f) as fin:
-		fin = open(filedir+f, "r")
+		fin = open(os.path.join(filedir, f), "r")
 		for l in fin:
 			l = l.rstrip()
 			if l == "":
@@ -44,8 +46,8 @@ def createSkillDict(filedir="./"):
 		fin.close()
 	return skillSet
 
-def readCharTable(filedir = "./"):
-	dictFile = filedir+"utftable.txt"
+def readCharTable(filedir = libFolder):
+	dictFile = os.path.join(filedir,"utftable.txt")
 	table = {}
 	fin = open(dictFile, "r")
 	line = fin.readline()
@@ -58,11 +60,37 @@ def readCharTable(filedir = "./"):
 	fin.close()
 	return table
 
-def readStopKeywords(filedir = "./"):
+def readStopKeywords(filedir = libFolder):
 	dictFile = os.path.join(filedir, "stopKeyword_CH.txt")
 	
 	keywordFilter = map(lambda x:x.strip(), open(dictFile, "r").readlines())
 	return keywordFilter
+
+def readSearchDomain(filedir = libFolder):
+	dictFile = os.path.join(filedir, "searchDomainCH.txt")
+	re_comp = {}
+	groups = []
+	newGroup = ""
+	with open(dictFile, "r") as fin:
+		for line in fin:
+			if line.startswith("SEC:"):
+				if newGroup != "":
+					tmpRe = "("
+					tmpRe += "|".join(groups)
+					tmpRe += ")"
+					tmpReComp = re.compile(tmpRe)
+					re_comp[newGroup] = tmpReComp
+				newGroup = line.strip()[4:]
+				groups = []
+				continue
+
+			groups.append(line.strip())
+		tmpRe = "("
+		tmpRe += "|".join(groups)
+		tmpRe += ")"
+		tmpReComp = re.compile(tmpRe)
+		re_comp[newGroup] = tmpReComp
+	return re_comp
 
 class ChNLParser:
 	
@@ -71,7 +99,7 @@ class ChNLParser:
 	charTable = readCharTable()
 #	charTable = {}
 	stopKeywords = readStopKeywords()
-
+	searchDomainGroup = readSearchDomain()
 	def __init__(self):
 		self.content = {"keywords":[],"action":"find","target":"","date":"","ne":[], "lang":"ch"}
 		self.localdict = {}	
@@ -297,6 +325,14 @@ class ChNLParser:
 		if re.search("(師|員|長|师|员|长|家|者)$", self.content["target"]) != None:
 			self.content["keywords"].append(self.content["target"])
 			self.content["target"] = "PERSON"
+		else:
+			for domain, pattern in ChNLParser.searchDomainGroup.iteritems():
+				if pattern.search(self.content["target"]) != None:
+					self.content["keywords"].append(self.content["target"])
+					self.content["target"] = domain
+					break
+				 
+		"""	
 		elif re.search("(新聞|新闻)", self.content["target"]) != None:
 			self.content["keywords"].append(self.content["target"])
 			self.content["target"] = "NEWS"
@@ -309,9 +345,18 @@ class ChNLParser:
 		elif re.search("(資料|資訊|资讯|资料|文献|文獻|訊息|讯息)", self.content["target"])!= None:
 			self.content["keywords"].append(self.content["target"])
 			self.content["target"] = "INFORMATION"
-
+		"""
 		
 		if self.content["target"] == "" and not self.content["keywords"]:#default if nothing found above, assign a category if the sentence contains special terms
+			if re.search("(人員|人员|人才|专家|專家|师|師|学者|學者|长|人)", sen_sc) != None:
+				self.content["target"] = "PERSON"
+			else:
+				for domain, pattern in ChNLParser.searchDomainGroup.iteritems():
+					if pattern.search(sen_sc) != None:
+						self.content["target"] = domain
+						break
+
+			"""
 			if re.search("(新聞|新闻)", sentence) != None:
 				self.content["target"] = "NEWS"
 			elif re.search("(人員|人员|人才|专家|專家|师|師|学者|學者|长|人)", sentence) != None:
@@ -322,7 +367,7 @@ class ChNLParser:
 				self.content["target"] = "PATENT"
 			elif re.search("(资料|资讯|文献|資料|資訊|文獻|讯息|訊息)", sentence)!= None:
 				self.content["target"] = "INFORMATION"
-
+			"""
 		tmpkw = []
 		for kv in self.content["keywords"]:
 			if kv.strip() not in ChNLParser.stopKeywords:
